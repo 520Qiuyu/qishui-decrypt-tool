@@ -1,0 +1,25 @@
+{
+  "name": "soda-decrypt",
+  "version": "1.0.0",
+  "private": true,
+  "description": "汽水音乐音频解密工具:PlayAuth + 音频链接 → 可播放 M4A/FLAC(CENC AES-CTR)",
+  "main": "lib/index.js",
+  "bin": {
+    "soda-decrypt": "soda-decrypt.js"
+  },
+  "scripts": {
+    "decrypt": "node soda-decrypt.js",
+    "ui": "node serve.js",
+    "test": "node test/batch-verify.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "license": "MIT",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [],
+  "author": ""
+}

@@ -1,0 +1,11 @@
+const path = require('path')
+const fs = require('fs')
+const idx = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/entries-with-keys.json'), 'utf8'))
+idx.sort((a, b) => b.previousAccessTime - a.previousAccessTime)
+const rec = idx[0]
+fs.writeFileSync(path.join(__dirname, '../data/_newest.json'), JSON.stringify(rec))
+console.log('newest chunkId:', rec.chunkId)
+console.log('time:', new Date(rec.previousAccessTime * 1000).toISOString())
+console.log('spade:', rec.spade)
+console.log('key:', rec.decryption_key)
+console.log('url:', rec.urls[0])

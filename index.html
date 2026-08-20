@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>汽水暗房 · 汽水音乐音频解密 | CENC Lathe</title>
+  <meta name="description" content="在浏览器里用 PlayAuth 解密汽水音乐加密音频，输出可播放的 M4A / FLAC。支持粘贴链接或本地文件，纯前端 CENC AES-128-CTR，无需安装客户端。" />
+  <meta name="keywords" content="汽水音乐,汽水暗房,PlayAuth,spade_a,CENC,音频解密,M4A,FLAC,AES-128-CTR" />
+  <meta name="author" content="汽水暗房" />
+  <meta name="robots" content="index,follow" />
+  <meta name="googlebot" content="index,follow" />
+  <meta name="theme-color" content="#100c09" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="application-name" content="汽水暗房" />
+  <meta name="apple-mobile-web-app-title" content="汽水暗房" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="汽水暗房" />
+  <meta property="og:title" content="汽水暗房 · 汽水音乐音频解密" />
+  <meta property="og:description" content="PlayAuth + 加密音频 → 可播放 M4A / FLAC。纯前端 CENC 解密，支持 URL 或本地文件。" />
+  <meta property="og:image" content="./favicon.svg" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="汽水暗房 · 汽水音乐音频解密" />
+  <meta name="twitter:description" content="在浏览器里解密汽水音乐加密音频，输出可播放的 M4A / FLAC。纯前端，无需安装。" />
+  <meta name="twitter:image" content="./favicon.svg" />
+
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./favicon.svg" />
+  <link rel="canonical" href="./" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Red+Hat+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,ital,wght@8..60,0,400;8..60,0,500;8..60,0,600;8..60,1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./index.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "汽水暗房",
+    "alternateName": "CENC Lathe",
+    "description": "在浏览器里用 PlayAuth 解密汽水音乐加密音频，输出可播放的 M4A / FLAC。",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "zh-CN",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "CNY"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <p id="file-banner" class="banner" hidden>
+    请通过本地静态服务或 GitHub Pages 打开（不要直接双击 HTML）。
+  </p>
+
+  <header class="mast">
+    <p class="mast__meta">
+      <span>PLATE 01</span>
+      <span>PRESSING ROOM · 03:00</span>
+      <span>AES-128-CTR</span>
+    </p>
+    <h1 class="mast__word" aria-label="CENC">CENC</h1>
+    <p class="mast__sub">
+      汽水音乐暗房<span class="dot">/</span>把 PlayAuth 与加密带片压成可听的母带
+    </p>
+  </header>
+
+  <main class="stage">
+    <aside class="lathe" aria-label="解密进度盘">
+      <div class="lathe__ring"></div>
+      <button
+        type="submit"
+        form="decrypt-form"
+        id="disc"
+        class="disc"
+        style="--p: 0%"
+        aria-label="点击开始解密，完成后再次点击播放或暂停"
+      >
+        <span class="disc__groove" aria-hidden="true"></span>
+        <span class="disc__label">
+          <span class="disc__brand">SODA · SPADE</span>
+          <span id="key-readout" class="disc__key" title="点击复制密钥">————————</span>
+          <span id="disc-status" class="disc__status">等待 PlayAuth</span>
+          <span id="progress-label" class="disc__pct">00%</span>
+        </span>
+        <span class="disc__spindle" aria-hidden="true"></span>
+      </button>
+      <p class="lathe__caption">CLICK TO UNLOCK · 点唱片开始</p>
+    </aside>
+
+    <section class="strip">
+      <form id="decrypt-form" class="strip__form">
+        <div class="field">
+          <label class="field__label" for="playauth">
+            <span class="field__idx">01</span>
+            PlayAuth
+            <span class="field__hint">spade_a</span>
+          </label>
+          <textarea
+            id="playauth"
+            name="playauth"
+            rows="3"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="粘贴 PlayAuth / spade_a（base64）"
+            aria-label="PlayAuth"
+          ></textarea>
+        </div>
+
+        <fieldset class="field field--source">
+          <legend class="field__label">
+            <span class="field__idx">02</span>
+            片源
+            <span class="field__hint">URL 或本地文件，二选一</span>
+          </legend>
+          <div class="seg" role="radiogroup" aria-label="片源类型">
+            <label class="seg__opt">
+              <input type="radio" name="source" id="source-url" value="url" checked />
+              <span>URL</span>
+            </label>
+            <label class="seg__opt">
+              <input type="radio" name="source" id="source-file" value="file" />
+              <span>本地文件</span>
+            </label>
+          </div>
+
+          <div id="pane-url" class="pane">
+            <label class="sr-only" for="audio-url">音频下载链接</label>
+            <textarea
+              id="audio-url"
+              name="url"
+              rows="4"
+              spellcheck="false"
+              placeholder="https://…douyinvod.com/…  （完整链接。若跨域失败，请改用本地文件）"
+              aria-label="音频 URL"
+            ></textarea>
+          </div>
+
+          <div id="pane-file" class="pane" hidden>
+            <input id="audio-file" type="file" class="sr-only" accept=".m4a,.mp4,.bin,audio/*,video/mp4" />
+            <div
+              id="dropzone"
+              class="drop"
+              role="button"
+              tabindex="0"
+              aria-label="拖放或选择加密音频文件"
+            >
+              <span class="drop__mark">◎</span>
+              <span id="file-name" class="drop__text">把加密 m4a / mp4 / bin 拖到这里，或按 Enter 选择</span>
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" id="btn-decrypt" class="unlock">
+          <span class="unlock__kicker">CHANNEL 3</span>
+          <span class="unlock__word">UNLOCK</span>
+          <span class="unlock__zh">开始压片</span>
+        </button>
+      </form>
+
+      <section class="console" aria-live="polite" aria-relevant="additions">
+        <h2 class="console__title">
+          <span>LATHE LOG</span>
+          <span>监视带</span>
+        </h2>
+        <div id="log" class="log">
+          <p class="log__line log__line--mute">待机。填入 PlayAuth，再给 URL 或文件。</p>
+        </div>
+      </section>
+
+      <section id="result" class="playback" hidden>
+        <h2 class="console__title">
+          <span>PLAYBACK</span>
+          <span>母带</span>
+        </h2>
+        <audio id="player" controls></audio>
+        <a id="btn-download" class="dl" href="#" download="decrypted.m4a">下载解密文件</a>
+      </section>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>纯前端:PlayAuth 解码与 CENC 解密都在浏览器完成。URL 由浏览器直连,无后端代理。</p>
+    <p>输出仍是 MP4 容器（AAC 为 mp4a，无损为 fLaC）。</p>
+  </footer>
+
+  <script type="module" src="./browser-libs/app.js"></script>
+</body>
+</html>
